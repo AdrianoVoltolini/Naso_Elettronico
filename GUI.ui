@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>349</width>
+    <height>506</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>auto_nos</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>8</y>
+      <width>341</width>
+      <height>491</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="centralLayout">
+     <item>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tab_queuer">
+        <attribute name="title">
+         <string>Queuer</string>
+        </attribute>
+        <widget class="QWidget" name="layoutWidget_2">
+         <property name="geometry">
+          <rect>
+           <x>2</x>
+           <y>-1</y>
+           <width>331</width>
+           <height>461</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="lista_input_queuer">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="layout_cartella_input">
+            <item>
+             <widget class="QLabel" name="label_cartella_input">
+              <property name="text">
+               <string>Cartella Input</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_cartella_input"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_scegli_input">
+              <property name="text">
+               <string>Scegli...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_cartella_output">
+            <item>
+             <widget class="QLabel" name="label_cartella_output">
+              <property name="text">
+               <string>Cartella Output</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_cartella_output"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_scegli_output">
+              <property name="text">
+               <string>Scegli...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_posizione_naso">
+            <item>
+             <widget class="QLabel" name="label_posizione_naso">
+              <property name="text">
+               <string>Posizione Naso Elettronico</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_posizione_naso"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_anno">
+            <item>
+             <widget class="QLabel" name="label_anno">
+              <property name="text">
+               <string>Anno</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="spinBox_anno"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_stampa_meta">
+            <item alignment="Qt::AlignmentFlag::AlignHCenter">
+             <widget class="QCheckBox" name="checkBox_stampa_meta">
+              <property name="text">
+               <string>Stampa Metadati sui sensori</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="bottone_start_queuer">
+            <property name="layoutDirection">
+             <enum>Qt::LayoutDirection::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Start</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QProgressBar" name="progressBar_queuer">
+            <property name="value">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEdit_queuer"/>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab_analisi">
+        <attribute name="title">
+         <string>Analisi</string>
+        </attribute>
+        <widget class="QWidget" name="layoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>331</width>
+           <height>461</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="lista_input_analisi">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>10</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="layout_analisi_cartella_input">
+            <item>
+             <widget class="QLabel" name="label_analisi_cartella_input">
+              <property name="text">
+               <string>Cartella Input</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_analisi_cartella_input"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_analisi_scegli_input">
+              <property name="text">
+               <string>Scegli...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_analisi_cartella_meteo">
+            <item>
+             <widget class="QLabel" name="label_analisi_cartella_meteo">
+              <property name="text">
+               <string>Cartella Meteo</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_analisi_cartella_meteo"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_analisi_cartella_meteo">
+              <property name="text">
+               <string>Scegli...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_analisi_file_interruz">
+            <item>
+             <widget class="QLabel" name="label_analisi_file_interruz">
+              <property name="text">
+               <string>File Interruzioni</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_analisi_file_interruz"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_analisi_scegli_file_interruz">
+              <property name="text">
+               <string>Scegli...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_analisi_foglio_interruz">
+            <item>
+             <widget class="QLabel" name="label_analisi_foglio_interruz">
+              <property name="text">
+               <string>Nome Foglio Interruzioni</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_analisi_foglio_interruz"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_analisi_anno">
+            <item>
+             <widget class="QLabel" name="label_analisi_anno">
+              <property name="layoutDirection">
+               <enum>Qt::LayoutDirection::LeftToRight</enum>
+              </property>
+              <property name="text">
+               <string>Anno</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="spinBox_analisi_anno"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_analisi_soglia">
+            <item>
+             <widget class="QLabel" name="label_analisi_soglia">
+              <property name="text">
+               <string>Soglia</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_analisi_soglia"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_analisi_max_d">
+            <item>
+             <widget class="QLabel" name="label_analisi_max_d">
+              <property name="text">
+               <string>max_d</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_analisi_max_d"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_analisi_wiggle">
+            <item>
+             <widget class="QLabel" name="label_analisi_wiggle">
+              <property name="text">
+               <string>wiggle</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_analisi_wiggle"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="layout_analisi_delta">
+            <item>
+             <widget class="QLabel" name="label_analisi_delta">
+              <property name="text">
+               <string>delta</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_analisi_delta"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="bottone_start_analisi">
+            <property name="text">
+             <string>Start</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QProgressBar" name="progressBar_analisi">
+            <property name="value">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEdit_analisi">
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
