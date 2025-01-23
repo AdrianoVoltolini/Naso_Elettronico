@@ -522,13 +522,13 @@ def main(cartella, cartella_meteo, interruzioni, sheet, anno, soglia, max_d, wig
 # %%
 if __name__ == "__main__":
 
-  cartella = "Simoncelli 2024 MISURE ogni 2-4 gg"
+  cartella = "CTE_2016"
   #cartella = "ogni 4 gg"
   cartella_meteo = "meteo_naso_2024"
   interruzioni = "MISURE-MALFUNZ.-MANUTENZ. PEN3.xlsx"
   #interruzioni = "Fasullo-MALFUNZ.-MANUTENZ. PEN3.xlsx"
   sheet = "misure e interruz"
-  anno = 2024
+  anno = 2016
   soglia = 2 # soglia dei segnali affinché vengano considerati come picchi
   max_d = 400 # distanza massima affinché due picchi vengano considerati della stessa curva
   wiggle = 300 # distanza massima tra il momento d'interruzione e un'estremità del grafico affinché l'interruzione venga disegnata alle estremità

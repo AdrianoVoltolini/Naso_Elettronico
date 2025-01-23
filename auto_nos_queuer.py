@@ -30,7 +30,7 @@ def get_filenames(nome_cartella, anno):
   #recupera date e ore dai nomi dei file e salva in dizionario
   diz_files = {}
   for nome in nomi_files:
-    if nome.endswith(".nos"):
+    if nome.endswith(".nos") and nome.startswith("noname") and len(nome) == 22: #len 22 serve per ignorare file con nomi modificati
       temp_list = nome.replace(".","_").split("_")
       diz_files[nome] = "".join(temp_list[-3:-1])
 
@@ -195,6 +195,8 @@ def main(anno, posizione_naso, cartella_input, cartella_output, stampa_meta):
   agg_months = get_filenames(cartella_input, anno)
 
   for m, month_df in agg_months:
+    if mesi[m] != "AGOSTO":
+      continue
     print(f"inizio {mesi[m]}...")
     quartet_list, q_starts, q_ends = split_month(month_df)
     cartella_mese = f"{str(m).zfill(2)} {posizione_naso}_Misure {mesi[m]} {anno}"
@@ -224,9 +226,9 @@ def main(anno, posizione_naso, cartella_input, cartella_output, stampa_meta):
 
 # %%
 if __name__ == "__main__":
-  anno = "2024"
+  anno = "2017"
   posizione_naso = "Simoncelli"
-  cartella_input = "Simoncelli_2024_ZI MISURE FEB (raw)"
+  cartella_input = "Simoncelli_2017_ZI MISURE"
   cartella_output = "ogni 4 gg"
   stampa_meta = False
 
