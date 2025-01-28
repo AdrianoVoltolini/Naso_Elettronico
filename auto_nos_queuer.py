@@ -195,8 +195,8 @@ def main(anno, posizione_naso, cartella_input, cartella_output, stampa_meta):
   agg_months = get_filenames(cartella_input, anno)
 
   for m, month_df in agg_months:
-    if mesi[m] != "AGOSTO":
-      continue
+    #if mesi[m] != "MAGGIO":
+    #  continue
     print(f"inizio {mesi[m]}...")
     quartet_list, q_starts, q_ends = split_month(month_df)
     cartella_mese = f"{str(m).zfill(2)} {posizione_naso}_Misure {mesi[m]} {anno}"
@@ -226,9 +226,9 @@ def main(anno, posizione_naso, cartella_input, cartella_output, stampa_meta):
 
 # %%
 if __name__ == "__main__":
-  anno = "2017"
+  anno = "2024"
   posizione_naso = "Simoncelli"
-  cartella_input = "Simoncelli_2017_ZI MISURE"
+  cartella_input = "dati/Simoncelli_2024_ZI MISURE"
   cartella_output = "ogni 4 gg"
   stampa_meta = False
 

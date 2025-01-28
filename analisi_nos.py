@@ -235,6 +235,7 @@ def recupera_interruzioni(filename, sheet, anno):
   df_output["stop"] = df_output["data_stop"] + df_output["ora_delta_stop"]
   df_output["riavvio"] = df_output["data_riavvio"] + df_output["ora_delta_riavvio"]
 
+  #print(df_output[["posizione", "stop", "riavvio", "note"]])
   return df_output[["posizione", "stop", "riavvio", "note"]]
 
 
@@ -280,10 +281,10 @@ def posiziona_verticali(raw, df_interruzioni, wiggle, delta):
   for i in range(1,raw.shape[0]):
     prev_dt = raw.index[i-1]
     curr_dt = raw.index[i]
-    if i == 1 and prev_dt.hour == 12 and prev_dt.minute < 10: #se primo elemento è vicino a mezzogiorno
+    if i == 1 and prev_dt.hour == 12 and prev_dt.minute <= 10: #se primo elemento è vicino a mezzogiorno
       mezzi_giorni.append(accorcia_datetime(prev_dt))
       mezzi_pos.append(i-1)
-    elif i == 1 and prev_dt.hour == 0 and prev_dt.minute < 10: #se primo elemento è vicino a mezzanotte
+    elif i == 1 and prev_dt.hour == 0 and prev_dt.minute <= 10: #se primo elemento è vicino a mezzanotte
       mezzi_giorni.append(accorcia_datetime(prev_dt))
       mezzi_pos.append(i-1)
     elif prev_dt.hour == 11 and curr_dt.hour == 12: #se c'è passaggio dalle 11 alle 12
@@ -292,10 +293,10 @@ def posiziona_verticali(raw, df_interruzioni, wiggle, delta):
     elif prev_dt.hour == 23 and curr_dt.hour == 0: #se c'è passaggio dalle 23 alle 00
       mezzi_giorni.append(accorcia_datetime(curr_dt))
       mezzi_pos.append(i)
-    elif i == raw.shape[0]-1 and curr_dt.hour == 11 and curr_dt.minute > 50: #se ultimo elemento è vicino a mezzogiorno
+    elif i == raw.shape[0]-1 and curr_dt.hour == 11 and curr_dt.minute >= 50: #se ultimo elemento è vicino a mezzogiorno
       mezzi_giorni.append(accorcia_datetime(curr_dt))
       mezzi_pos.append(i)
-    elif i == raw.shape[0]-1 and curr_dt.hour == 23 and curr_dt.minute > 50: #se ultimo elemento è vicino a mezzanotte
+    elif i == raw.shape[0]-1 and curr_dt.hour == 23 and curr_dt.minute >= 50: #se ultimo elemento è vicino a mezzanotte
       mezzi_giorni.append(accorcia_datetime(curr_dt))
       mezzi_pos.append(i)
 
@@ -314,6 +315,8 @@ def posiziona_verticali(raw, df_interruzioni, wiggle, delta):
 
 #fa il grafico
 def disegnatore(raw, titolo, soglia, mezzi_giorni, mezzi_pos, stops, stop_pos, riavvii):
+
+  mpl.rcParams['ytick.labelsize'] = 4 #dimensione dei label sull'asse y
 
   # crea la "cornice" del grafico
   fig, ax = plt.subplots()
@@ -348,7 +351,7 @@ def disegnatore(raw, titolo, soglia, mezzi_giorni, mezzi_pos, stops, stop_pos, r
   #disegna le righe verticali per il mezzogiorno e mezzanotte
   #mette in grassetto se sono alle estremità del grafico
   for l in range(len(mezzi_pos)):
-    if mezzi_giorni[l][-5:-1] in ["00:0","23:5"]:
+    if mezzi_giorni[l][-5:-1] in ["00:0","00:1","23:5"]:
       if l == 0:
         if len(stop_pos) == 0:
           plt.axvline(mezzi_pos[l], color="red", linewidth=3)
@@ -368,7 +371,7 @@ def disegnatore(raw, titolo, soglia, mezzi_giorni, mezzi_pos, stops, stop_pos, r
       else:
         plt.axvline(mezzi_pos[l], color="red")
 
-    elif mezzi_giorni[l][-5:-1] in ["12:0","11:5"]:
+    elif mezzi_giorni[l][-5:-1] in ["12:0","12:1","11:5"]:
       if l == 0:
         if len(stop_pos) == 0:
           plt.axvline(mezzi_pos[l], linewidth=3)
@@ -424,7 +427,6 @@ def disegnatore(raw, titolo, soglia, mezzi_giorni, mezzi_pos, stops, stop_pos, r
   x_labels = mezzi_giorni
   ax.set_xticks(x_ticks, labels=x_labels, size=4)
   fig.autofmt_xdate()
-  mpl.rcParams['ytick.labelsize'] = 4
 
   plt.suptitle(titolo) #aggiunge titolo
 
@@ -475,7 +477,7 @@ def elabora_mese(cartella, anno, soglia, max_d, df_interruzioni, wiggle, delta, 
       disegnatore(raw, titolo, soglia, mezzi_giorni, mezzi_pos, stops, stop_pos, riavvii)
 
       #salva grafico creato da disegnatore()
-      plt.savefig(f"{cartella}fig_{f[4:-4]}.png", dpi=600)
+      plt.savefig(f"{cartella}fig_{f[4:-4]}.jpg", dpi=600)
       plt.close()
     else:
       #print(f"\nignoro file {f} perché non comincia con aaa")
@@ -522,13 +524,13 @@ def main(cartella, cartella_meteo, interruzioni, sheet, anno, soglia, max_d, wig
 # %%
 if __name__ == "__main__":
 
-  cartella = "CTE_2016"
-  #cartella = "ogni 4 gg"
+  #cartella = "CTE_2016"
+  cartella = "ogni 4 gg"
   cartella_meteo = "meteo_naso_2024"
   interruzioni = "MISURE-MALFUNZ.-MANUTENZ. PEN3.xlsx"
   #interruzioni = "Fasullo-MALFUNZ.-MANUTENZ. PEN3.xlsx"
   sheet = "misure e interruz"
-  anno = 2016
+  anno = 2024
   soglia = 2 # soglia dei segnali affinché vengano considerati come picchi
   max_d = 400 # distanza massima affinché due picchi vengano considerati della stessa curva
   wiggle = 300 # distanza massima tra il momento d'interruzione e un'estremità del grafico affinché l'interruzione venga disegnata alle estremità
