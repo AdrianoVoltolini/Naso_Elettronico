@@ -13,7 +13,7 @@ import os
 import math
 import pandas as pd
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from io import StringIO
 
 import warnings
@@ -50,10 +50,40 @@ def get_filenames(nome_cartella, anno):
   df_clean = df_clean.reset_index(names="filename")
   df_clean = df_clean.set_index("datetime")
 
+  df_interruzioni = trova_interruzioni(df_clean, anno)
+
   #raggruppa righe in base al mese
   grouped_by_month = df_clean.groupby(lambda x: x.month)
 
-  return grouped_by_month
+  return grouped_by_month, df_interruzioni
+
+def trova_interruzioni(df, anno):
+  minimum_diff = timedelta(hours=1)
+  df_interruzioni = pd.DataFrame()
+  for i in range(len(df.index)):
+    diff = timedelta()
+
+    if i == 0:
+      date_1 = df.index[i]
+      temp_df = pd.DataFrame([pd.NA, str(date_1), pd.NA])
+      df_interruzioni = pd.concat([df_interruzioni,temp_df],axis=1)
+
+    else:
+      date_1 = df.index[i]
+      date_2 = df.index[i-1]
+      diff = date_1 - date_2
+
+      if diff >= minimum_diff:
+        temp_df = pd.DataFrame([str(date_2), str(date_1), str(diff)])
+        df_interruzioni = pd.concat([df_interruzioni,temp_df],axis=1)
+  
+  temp_df = pd.DataFrame([str(date_1),pd.NA,pd.NA])
+  df_interruzioni = pd.concat([df_interruzioni, temp_df],axis=1)
+  
+  df_interruzioni = df_interruzioni.T.reset_index(drop=True)
+  df_interruzioni.columns = ["stop", "riavvio", "durata interruzione"]
+
+  return df_interruzioni
 
 
 # %%
@@ -192,7 +222,18 @@ def main(anno, posizione_naso, cartella_input, cartella_output, stampa_meta):
   if cartella_output not in os.listdir():
     os.mkdir(cartella_output)
 
-  agg_months = get_filenames(cartella_input, anno)
+  agg_months, df_interruzioni = get_filenames(cartella_input, anno)
+
+  interr_path = f"{cartella_output}/interruzioni {anno} {posizione_naso}.csv"
+  
+  if os.path.exists(interr_path):
+    df_interr_old = pd.read_csv(interr_path, index_col=0)
+    inter_inter = pd.concat([df_interruzioni, df_interr_old]).drop_duplicates().sort_values("riavvio").reset_index(drop=True)
+    inter_inter.to_csv(interr_path)
+  else:
+    df_interruzioni.to_csv(interr_path)
+    
+
 
   for m, month_df in agg_months:
     #if mesi[m] != "MAGGIO":
