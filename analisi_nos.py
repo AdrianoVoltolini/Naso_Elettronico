@@ -10,13 +10,12 @@
 import re
 import os
 import matplotlib.pyplot as plt
-import matplotlib.patheffects as patheffects
 import matplotlib as mpl
 import numpy as np
 import pandas as pd
 
 from io import StringIO
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 
 import warnings
 warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
@@ -209,40 +208,10 @@ def time_to_delta(t):
   return out
 
 
-#legge foglio excel con le interruzioni e le salva in dataframe
-def recupera_interruzioni(filename, sheet, anno):
-
-  raw_df = pd.read_excel(filename, sheet_name=sheet)
-
-  start_row = raw_df.index[raw_df.iloc[:,0] == anno][0]
-
-  possible_ends = raw_df.iloc[start_row:,:].index[raw_df.iloc[start_row:,0].isnull() == True]
-
-  if len(possible_ends) > 1:
-    end_row = possible_ends[1]
-  else:
-    end_row = -1
-
-  #bisognerebbe ottimizzare da qui al return, ma il numero delle righe è così piccolo di solito che non ne vale la pena
-  df_output = raw_df.iloc[start_row+1:end_row,:8]
-
-  df_output.columns = ["posizione", "data_inizio", "ora_inizio", "data_stop", "ora_stop", "data_riavvio", "ora_riavvio", "note"]
-  df_output = df_output.drop(df_output.index[0]).dropna(subset="data_stop").reset_index(drop=True)
-
-  df_output["ora_delta_stop"] = df_output["ora_stop"].map(time_to_delta)
-  df_output["ora_delta_riavvio"] = df_output["ora_riavvio"].map(time_to_delta)
-
-  df_output["stop"] = df_output["data_stop"] + df_output["ora_delta_stop"]
-  df_output["riavvio"] = df_output["data_riavvio"] + df_output["ora_delta_riavvio"]
-
-  #print(df_output[["posizione", "stop", "riavvio", "note"]])
-  return df_output[["posizione", "stop", "riavvio", "note"]]
-
-
 # %%
 #trova dove bisogna disegnare linee verticali:
 #a mezzogiorno, mezzanotte e alle interruzioni
-def posiziona_verticali(raw, df_interruzioni, wiggle, delta):
+def posiziona_verticali(raw, df_interruzioni, wiggle):
 
   mezzi_giorni = []
   mezzi_pos = []
@@ -255,8 +224,18 @@ def posiziona_verticali(raw, df_interruzioni, wiggle, delta):
   #trova interruzioni che influenza dati considerati
   for i, r in df_interruzioni.iterrows():
 
-    stop = r["stop"] + timedelta(seconds=delta) #aggiungi all'ora di stop un ammontare di secondi pari al numero di secondi che dura la misurazione
+    stop = r["stop"]
+    if pd.isna(stop):
+      stop = datetime(1970,1,1)
+    else:
+      stop = datetime.strptime(stop, "%Y-%m-%d %H:%M:%S")
+
     riavvio = r["riavvio"]
+    if pd.isna(riavvio):
+      riavvio = datetime(3000,12,31)
+    else:
+      riavvio = datetime.strptime(riavvio, "%Y-%m-%d %H:%M:%S")
+
     inizio_riavvio_diff = riavvio - raw.index[0]
     fine_stop_diff = raw.index[-1] - stop
 
@@ -437,7 +416,7 @@ def disegnatore(raw, titolo, soglia, mezzi_giorni, mezzi_pos, stops, stop_pos, r
 # prende in input una cartella con dentro file di un singolo mese,
 # trova i picchi e li mette tutti in un singolo csv
 # e poi fa i grafici dei singoli file
-def elabora_mese(cartella, anno, soglia, max_d, df_interruzioni, wiggle, delta, mesi, cartella_meteo):
+def elabora_mese(cartella, anno, soglia, max_d, df_interruzioni, wiggle, mesi, cartella_meteo):
 
   df_picchi = pd.DataFrame()
 
@@ -472,7 +451,7 @@ def elabora_mese(cartella, anno, soglia, max_d, df_interruzioni, wiggle, delta, 
       #if titolo not in ["21 MAGGIO 2024", "05-06 APRILE 2024", "15-29 FEBBRAIO 2024"]:
         #continue
 
-      mezzi_giorni, mezzi_pos, stops, stop_pos, riavvii = posiziona_verticali(raw, df_interruzioni, wiggle, delta)
+      mezzi_giorni, mezzi_pos, stops, stop_pos, riavvii = posiziona_verticali(raw, df_interruzioni, wiggle)
 
       disegnatore(raw, titolo, soglia, mezzi_giorni, mezzi_pos, stops, stop_pos, riavvii)
 
@@ -495,7 +474,7 @@ def elabora_mese(cartella, anno, soglia, max_d, df_interruzioni, wiggle, delta, 
 
 
 # %%
-def main(cartella, cartella_meteo, interruzioni, sheet, anno, soglia, max_d, wiggle, delta):
+def main(cartella, cartella_meteo, interruzioni, anno, soglia, max_d, wiggle):
   mesi = {
       1:"GENNAIO",
       2:"FEBBRAIO",
@@ -511,12 +490,12 @@ def main(cartella, cartella_meteo, interruzioni, sheet, anno, soglia, max_d, wig
       12:"DICEMBRE"
   }
 
-  df_interruzioni = recupera_interruzioni(interruzioni, sheet, anno)
+  df_interruzioni = pd.read_csv(interruzioni)
 
   for sub_cartella in os.listdir(cartella):
     temp_path = f"{cartella}/{sub_cartella}/"
     if os.path.isdir(temp_path) and temp_path.endswith(f"{anno}/"):
-      em_err = elabora_mese(temp_path, anno, soglia, max_d, df_interruzioni, wiggle, delta, mesi, cartella_meteo)
+      em_err = elabora_mese(temp_path, anno, soglia, max_d, df_interruzioni, wiggle, mesi, cartella_meteo)
       if em_err != None:
         print(em_err)
 
@@ -527,16 +506,13 @@ if __name__ == "__main__":
   #cartella = "CTE_2016"
   cartella = "ogni 4 gg"
   cartella_meteo = "meteo_naso_2024"
-  interruzioni = "MISURE-MALFUNZ.-MANUTENZ. PEN3.xlsx"
-  #interruzioni = "Fasullo-MALFUNZ.-MANUTENZ. PEN3.xlsx"
-  sheet = "misure e interruz"
+  interruzioni = "ogni 4 gg/interruzioni 2024 Simoncelli.csv"
   anno = 2024
   soglia = 2 # soglia dei segnali affinché vengano considerati come picchi
   max_d = 400 # distanza massima affinché due picchi vengano considerati della stessa curva
   wiggle = 300 # distanza massima tra il momento d'interruzione e un'estremità del grafico affinché l'interruzione venga disegnata alle estremità
-  delta = 100 # num di secondi che dura (di solito) una misurazione
 
-  main(cartella, cartella_meteo, interruzioni, sheet, anno, soglia, max_d, wiggle, delta)
+  main(cartella, cartella_meteo, interruzioni, anno, soglia, max_d, wiggle)
 
 
 
