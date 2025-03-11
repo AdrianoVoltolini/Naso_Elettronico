@@ -211,7 +211,7 @@ def time_to_delta(t):
 # %%
 #trova dove bisogna disegnare linee verticali:
 #a mezzogiorno, mezzanotte e alle interruzioni
-def posiziona_verticali(raw, df_interruzioni, wiggle):
+def posiziona_verticali(raw, df_interruzioni):
 
   mezzi_giorni = []
   mezzi_pos = []
@@ -221,40 +221,27 @@ def posiziona_verticali(raw, df_interruzioni, wiggle):
 
   riavvii = []
 
+  dummy_stop = datetime(1970,1,1)
+  dummy_riavvio = datetime(3000,12,31)
+
   #trova interruzioni che influenza dati considerati
   for i, r in df_interruzioni.iterrows():
 
     stop = r["stop"]
     if pd.isna(stop):
-      stop = datetime(1970,1,1)
+      stop = dummy_stop
     else:
       stop = datetime.strptime(stop, "%Y-%m-%d %H:%M:%S")
 
     riavvio = r["riavvio"]
     if pd.isna(riavvio):
-      riavvio = datetime(3000,12,31)
+      riavvio = dummy_riavvio
     else:
       riavvio = datetime.strptime(riavvio, "%Y-%m-%d %H:%M:%S")
-
-    inizio_riavvio_diff = riavvio - raw.index[0]
-    fine_stop_diff = raw.index[-1] - stop
 
     if raw.index[0] <= stop and riavvio <= raw.index[-1]:
       stops.append(stop)
       riavvii.append(riavvio)
-      #print("\nnel mezzo", stops[-1], riavvii[-1])
-
-    elif abs(inizio_riavvio_diff.total_seconds()) < wiggle: # considera anche se interruzione è molto vicino all'inizio
-      stops.append(stop)
-      riavvii.append(raw.index[0])
-      #print("\noltre l'inizio", riavvii[-1])
-    elif abs(fine_stop_diff.total_seconds()) < wiggle: # considera anche se interruzione è molto vicino alla fine
-      stops.append(raw.index[-1])
-      riavvii.append(riavvio)
-      #print("\noltre la fine", stops[-1])
-    else:
-      #print("no interruzioni")
-      pass
 
   #trova i punti più vicini al mezzogiorno e mezzanotte
   for i in range(1,raw.shape[0]):
@@ -416,7 +403,7 @@ def disegnatore(raw, titolo, soglia, mezzi_giorni, mezzi_pos, stops, stop_pos, r
 # prende in input una cartella con dentro file di un singolo mese,
 # trova i picchi e li mette tutti in un singolo csv
 # e poi fa i grafici dei singoli file
-def elabora_mese(cartella, anno, soglia, max_d, df_interruzioni, wiggle, mesi, cartella_meteo):
+def elabora_mese(cartella, anno, soglia, max_d, df_interruzioni, mesi, cartella_meteo):
 
   df_picchi = pd.DataFrame()
 
@@ -451,7 +438,7 @@ def elabora_mese(cartella, anno, soglia, max_d, df_interruzioni, wiggle, mesi, c
       #if titolo not in ["21 MAGGIO 2024", "05-06 APRILE 2024", "15-29 FEBBRAIO 2024"]:
         #continue
 
-      mezzi_giorni, mezzi_pos, stops, stop_pos, riavvii = posiziona_verticali(raw, df_interruzioni, wiggle)
+      mezzi_giorni, mezzi_pos, stops, stop_pos, riavvii = posiziona_verticali(raw, df_interruzioni)
 
       disegnatore(raw, titolo, soglia, mezzi_giorni, mezzi_pos, stops, stop_pos, riavvii)
 
@@ -474,7 +461,7 @@ def elabora_mese(cartella, anno, soglia, max_d, df_interruzioni, wiggle, mesi, c
 
 
 # %%
-def main(cartella, cartella_meteo, interruzioni, anno, soglia, max_d, wiggle):
+def main(cartella, cartella_meteo, interruzioni, anno, soglia, max_d):
   mesi = {
       1:"GENNAIO",
       2:"FEBBRAIO",
@@ -495,7 +482,7 @@ def main(cartella, cartella_meteo, interruzioni, anno, soglia, max_d, wiggle):
   for sub_cartella in os.listdir(cartella):
     temp_path = f"{cartella}/{sub_cartella}/"
     if os.path.isdir(temp_path) and temp_path.endswith(f"{anno}/"):
-      em_err = elabora_mese(temp_path, anno, soglia, max_d, df_interruzioni, wiggle, mesi, cartella_meteo)
+      em_err = elabora_mese(temp_path, anno, soglia, max_d, df_interruzioni, mesi, cartella_meteo)
       if em_err != None:
         print(em_err)
 
@@ -510,9 +497,8 @@ if __name__ == "__main__":
   anno = 2024
   soglia = 2 # soglia dei segnali affinché vengano considerati come picchi
   max_d = 400 # distanza massima affinché due picchi vengano considerati della stessa curva
-  wiggle = 300 # distanza massima tra il momento d'interruzione e un'estremità del grafico affinché l'interruzione venga disegnata alle estremità
 
-  main(cartella, cartella_meteo, interruzioni, anno, soglia, max_d, wiggle)
+  main(cartella, cartella_meteo, interruzioni, anno, soglia, max_d)
 
 
 

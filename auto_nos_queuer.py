@@ -50,14 +50,14 @@ def get_filenames(nome_cartella, anno):
   df_clean = df_clean.reset_index(names="filename")
   df_clean = df_clean.set_index("datetime")
 
-  df_interruzioni = trova_interruzioni(df_clean, anno)
+  df_interruzioni = trova_interruzioni(df_clean)
 
   #raggruppa righe in base al mese
   grouped_by_month = df_clean.groupby(lambda x: x.month)
 
   return grouped_by_month, df_interruzioni
 
-def trova_interruzioni(df, anno):
+def trova_interruzioni(df):
   minimum_diff = timedelta(hours=1)
   df_interruzioni = pd.DataFrame()
   for i in range(len(df.index)):
@@ -271,7 +271,7 @@ if __name__ == "__main__":
   posizione_naso = "Simoncelli"
   cartella_input = "dati/Simoncelli_2024_ZI MISURE"
   cartella_output = "ogni 4 gg"
-  stampa_meta = False
+  stampa_meta = True
 
   main(anno, posizione_naso, cartella_input, cartella_output, stampa_meta)
 
