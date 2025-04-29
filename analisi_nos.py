@@ -243,6 +243,17 @@ def posiziona_verticali(raw, df_interruzioni):
       stops.append(stop)
       riavvii.append(riavvio)
 
+    elif stop == dummy_stop and riavvio == raw.index[0]: 
+      #caso in cui si fa ripartire il naso da interruzione con inizio sconosciuto
+      stops.append(stop)
+      riavvii.append(riavvio)
+
+    elif riavvio == dummy_riavvio and raw.index[0] <= stop <= raw.index[-1]: 
+      #caso in cui si ferma manualmente il naso senza farlo ripartire
+      stops.append(raw.index[-1])
+      riavvii.append(riavvio)
+
+
   #trova i punti più vicini al mezzogiorno e mezzanotte
   for i in range(1,raw.shape[0]):
     prev_dt = raw.index[i-1]
@@ -362,9 +373,11 @@ def disegnatore(raw, titolo, soglia, mezzi_giorni, mezzi_pos, stops, stop_pos, r
   for s in range(len(stop_pos)):
     if stop_pos[s] == 0:
       plt.axvline(stop_pos[s], color="orange", linewidth=3)
-      plt.annotate(accorcia_datetime(stops[s]), [stop_pos[s]-raw.shape[0]/50, 2.15], size=7, rotation=90, color="orange", annotation_clip=False,)
+      if stops[s] != datetime(1970,1,1):
+        plt.annotate(accorcia_datetime(stops[s]), [stop_pos[s]-raw.shape[0]/50, 2.15], size=7, rotation=90, color="orange", annotation_clip=False,)
                     #path_effects=[patheffects.withStroke(linewidth=0.5, foreground='lightgray', capstyle="round")]) # contorni
-      plt.annotate(accorcia_datetime(riavvii[s]), [stop_pos[s]+raw.shape[0]/150, 2.15], size=7, rotation=90, color="orange", annotation_clip=False,)
+      if riavvii[s] != datetime(3000,12,31):
+        plt.annotate(accorcia_datetime(riavvii[s]), [stop_pos[s]+raw.shape[0]/150, 2.15], size=7, rotation=90, color="orange", annotation_clip=False,)
                     #path_effects=[patheffects.withStroke(linewidth=0.5, foreground='lightgray', capstyle="round")]) # contorni
       #print("ciao_s1")
     elif 0 < stop_pos[s] < raw.shape[0]-1:
@@ -376,9 +389,11 @@ def disegnatore(raw, titolo, soglia, mezzi_giorni, mezzi_pos, stops, stop_pos, r
       #print("ciao_s2")
     else:
       plt.axvline(stop_pos[s], color="orange", linewidth=3)
-      plt.annotate(accorcia_datetime(stops[s]), [stop_pos[s]-raw.shape[0]/45, 2.15], size=7, rotation=90, color="orange", annotation_clip=False,)
+      if stops[s] != datetime(1970,1,1):
+        plt.annotate(accorcia_datetime(stops[s]), [stop_pos[s]-raw.shape[0]/45, 2.15], size=7, rotation=90, color="orange", annotation_clip=False,)
                     #path_effects=[patheffects.withStroke(linewidth=0.5, foreground='lightgray', capstyle="round")]) # contorni
-      plt.annotate(accorcia_datetime(riavvii[s]), [stop_pos[s]+raw.shape[0]/160, 2.15], size=7, rotation=90, color="orange", annotation_clip=False,)
+      if riavvii[s] != datetime(3000,12,31):
+        plt.annotate(accorcia_datetime(riavvii[s]), [stop_pos[s]+raw.shape[0]/160, 2.15], size=7, rotation=90, color="orange", annotation_clip=False,)
                     #path_effects=[patheffects.withStroke(linewidth=0.5, foreground='lightgray', capstyle="round")]) # contorni
       #print("ciao_s3")
 
@@ -491,10 +506,10 @@ def main(cartella, cartella_meteo, interruzioni, anno, soglia, max_d):
 if __name__ == "__main__":
 
   #cartella = "CTE_2016"
-  cartella = "ogni 4 gg"
+  cartella = "ogni 4 gg/"
   cartella_meteo = "meteo_naso_2024"
-  interruzioni = "ogni 4 gg/interruzioni 2024 Simoncelli.csv"
-  anno = 2024
+  interruzioni = "ogni 4 gg/interruzioni 2025 Simoncelli.csv"
+  anno = 2025
   soglia = 2 # soglia dei segnali affinché vengano considerati come picchi
   max_d = 400 # distanza massima affinché due picchi vengano considerati della stessa curva
 

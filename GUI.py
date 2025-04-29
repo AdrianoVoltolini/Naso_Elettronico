@@ -213,21 +213,6 @@ class Ui_MainWindow(object):
 
         self.lista_input_analisi.addLayout(self.layout_analisi_file_interruz)
 
-        self.layout_analisi_foglio_interruz = QHBoxLayout()
-        self.layout_analisi_foglio_interruz.setObjectName(u"layout_analisi_foglio_interruz")
-        self.label_analisi_foglio_interruz = QLabel(self.layoutWidget)
-        self.label_analisi_foglio_interruz.setObjectName(u"label_analisi_foglio_interruz")
-
-        self.layout_analisi_foglio_interruz.addWidget(self.label_analisi_foglio_interruz)
-
-        self.lineEdit_analisi_foglio_interruz = QLineEdit(self.layoutWidget)
-        self.lineEdit_analisi_foglio_interruz.setObjectName(u"lineEdit_analisi_foglio_interruz")
-
-        self.layout_analisi_foglio_interruz.addWidget(self.lineEdit_analisi_foglio_interruz)
-
-
-        self.lista_input_analisi.addLayout(self.layout_analisi_foglio_interruz)
-
         self.layout_analisi_anno = QHBoxLayout()
         self.layout_analisi_anno.setObjectName(u"layout_analisi_anno")
         self.label_analisi_anno = QLabel(self.layoutWidget)
@@ -277,38 +262,6 @@ class Ui_MainWindow(object):
 
         self.lista_input_analisi.addLayout(self.layout_analisi_max_d)
 
-        self.layout_analisi_wiggle = QHBoxLayout()
-        self.layout_analisi_wiggle.setObjectName(u"layout_analisi_wiggle")
-        self.label_analisi_wiggle = QLabel(self.layoutWidget)
-        self.label_analisi_wiggle.setObjectName(u"label_analisi_wiggle")
-        self.label_analisi_wiggle.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
-
-        self.layout_analisi_wiggle.addWidget(self.label_analisi_wiggle)
-
-        self.doubleSpinBox_analisi_wiggle = QDoubleSpinBox(self.layoutWidget)
-        self.doubleSpinBox_analisi_wiggle.setObjectName(u"doubleSpinBox_analisi_wiggle")
-
-        self.layout_analisi_wiggle.addWidget(self.doubleSpinBox_analisi_wiggle)
-
-
-        self.lista_input_analisi.addLayout(self.layout_analisi_wiggle)
-
-        self.layout_analisi_delta = QHBoxLayout()
-        self.layout_analisi_delta.setObjectName(u"layout_analisi_delta")
-        self.label_analisi_delta = QLabel(self.layoutWidget)
-        self.label_analisi_delta.setObjectName(u"label_analisi_delta")
-        self.label_analisi_delta.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
-
-        self.layout_analisi_delta.addWidget(self.label_analisi_delta)
-
-        self.doubleSpinBox_analisi_delta = QDoubleSpinBox(self.layoutWidget)
-        self.doubleSpinBox_analisi_delta.setObjectName(u"doubleSpinBox_analisi_delta")
-
-        self.layout_analisi_delta.addWidget(self.doubleSpinBox_analisi_delta)
-
-
-        self.lista_input_analisi.addLayout(self.layout_analisi_delta)
-
         self.bottone_start_analisi = QPushButton(self.layoutWidget)
         self.bottone_start_analisi.setObjectName(u"bottone_start_analisi")
 
@@ -341,7 +294,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Auto Nos", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"auto_nos", None))
         self.label_cartella_input.setText(QCoreApplication.translate("MainWindow", u"Cartella Input", None))
         self.pushButton_scegli_input.setText(QCoreApplication.translate("MainWindow", u"Scegli...", None))
         self.label_cartella_output.setText(QCoreApplication.translate("MainWindow", u"Cartella Output", None))
@@ -357,12 +310,9 @@ class Ui_MainWindow(object):
         self.pushButton_analisi_cartella_meteo.setText(QCoreApplication.translate("MainWindow", u"Scegli...", None))
         self.label_analisi_file_interruz.setText(QCoreApplication.translate("MainWindow", u"File Interruzioni", None))
         self.pushButton_analisi_scegli_file_interruz.setText(QCoreApplication.translate("MainWindow", u"Scegli...", None))
-        self.label_analisi_foglio_interruz.setText(QCoreApplication.translate("MainWindow", u"Nome Foglio Interruzioni", None))
         self.label_analisi_anno.setText(QCoreApplication.translate("MainWindow", u"Anno", None))
         self.label_analisi_soglia.setText(QCoreApplication.translate("MainWindow", u"Soglia", None))
         self.label_analisi_max_d.setText(QCoreApplication.translate("MainWindow", u"max_d", None))
-        self.label_analisi_wiggle.setText(QCoreApplication.translate("MainWindow", u"wiggle", None))
-        self.label_analisi_delta.setText(QCoreApplication.translate("MainWindow", u"delta", None))
         self.bottone_start_analisi.setText(QCoreApplication.translate("MainWindow", u"Start", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_analisi), QCoreApplication.translate("MainWindow", u"Analisi", None))
     # retranslateUi

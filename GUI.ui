@@ -261,20 +261,6 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="layout_analisi_foglio_interruz">
-            <item>
-             <widget class="QLabel" name="label_analisi_foglio_interruz">
-              <property name="text">
-               <string>Nome Foglio Interruzioni</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="lineEdit_analisi_foglio_interruz"/>
-            </item>
-           </layout>
-          </item>
-          <item>
            <layout class="QHBoxLayout" name="layout_analisi_anno">
             <item>
              <widget class="QLabel" name="label_analisi_anno">
@@ -325,40 +311,6 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="doubleSpinBox_analisi_max_d"/>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="layout_analisi_wiggle">
-            <item>
-             <widget class="QLabel" name="label_analisi_wiggle">
-              <property name="text">
-               <string>wiggle</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_analisi_wiggle"/>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="layout_analisi_delta">
-            <item>
-             <widget class="QLabel" name="label_analisi_delta">
-              <property name="text">
-               <string>delta</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_analisi_delta"/>
             </item>
            </layout>
           </item>

@@ -8,7 +8,7 @@ from cx_Freeze import setup, Executable
 
 setup(
     name="Auto Nos",
-    version="0.2",
+    version="0.3",
     description="Applicazione per concatenamento ed analisi di file NOS",
     #options={"build_exe": build_exe_options},
     executables=[Executable("main_window.py", base="gui")],

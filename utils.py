@@ -1,8 +1,8 @@
 from PySide6 import QtCore
 import os
 from auto_nos_queuer import get_filenames, split_month, merge_files
-from analisi_nos import recupera_interruzioni, elabora_mese
-
+from analisi_nos import elabora_mese
+import pandas as pd
 
 class EmittingStream(QtCore.QObject):
 
@@ -32,16 +32,27 @@ class QueuerWorker(QtCore.QObject):
 
 
     def run(self):
-        
+    
         try:
             os.mkdir(self.cartella_output)
         except:
             pass
 
-        agg_months = get_filenames(self.cartella_input, self.anno)
+        agg_months, df_interruzioni = get_filenames(self.cartella_input, self.anno)
+
+        interr_path = f"{self.cartella_output}/interruzioni {self.anno} {self.posizione_naso}.csv"
+        
+        if os.path.exists(interr_path):
+            df_interr_old = pd.read_csv(interr_path, index_col=0)
+            inter_inter = pd.concat([df_interruzioni, df_interr_old]).drop_duplicates().sort_values("riavvio").reset_index(drop=True)
+            inter_inter.to_csv(interr_path)
+        else:
+            df_interruzioni.to_csv(interr_path)
+
+
+
 
         cnt = 0
-
 
         for m, month_df in agg_months:
             print(f"inizio {self.mesi[m]}...")
@@ -77,6 +88,7 @@ class QueuerWorker(QtCore.QObject):
             self.progress.emit(round((cnt/len(agg_months))*100))
 
         print("finito!")
+
         self.finished.emit()
 
 
@@ -86,23 +98,20 @@ class AnalisiWorker(QtCore.QObject):
     finished = QtCore.Signal()
     progress = QtCore.Signal(int)
 
-    def __init__(self, cartella, cartella_meteo, interruzioni, sheet, anno, soglia, max_d, wiggle, delta, mesi):
+    def __init__(self, cartella, cartella_meteo, interruzioni, anno, soglia, max_d, mesi):
         super().__init__()  
         self.cartella = cartella
         self.cartella_meteo = cartella_meteo
         self.interruzioni = interruzioni
-        self.sheet = sheet
         self.anno = anno
         self.soglia = soglia
         self.max_d = max_d
-        self.wiggle = wiggle
-        self.delta = delta
         self.mesi = mesi
 
 
     def run(self):
 
-        df_interruzioni = recupera_interruzioni(self.interruzioni, self.sheet, self.anno)
+        df_interruzioni = pd.read_csv(self.interruzioni)
         
         cnt = 0
         list_cartella = os.listdir(self.cartella)
@@ -110,12 +119,12 @@ class AnalisiWorker(QtCore.QObject):
         for sub_cartella in list_cartella:
             cnt += 1
             temp_path = f"{self.cartella}/{sub_cartella}/"
-            if os.path.isdir(temp_path):
+            if os.path.isdir(temp_path) and temp_path.endswith(f"{self.anno}/"):
                 print(f"inizio {sub_cartella}...")
-                em_err = elabora_mese(temp_path, self.anno, self.soglia, self.max_d, df_interruzioni, self.wiggle, self.delta, self.mesi, self.cartella_meteo)
+                em_err = elabora_mese(temp_path, self.anno, self.soglia, self.max_d, df_interruzioni, self.mesi, self.cartella_meteo)
                 if em_err != None:
                     print(em_err)
-                self.progress.emit(round((cnt/len(list_cartella))*100))
+            self.progress.emit(round((cnt/len(list_cartella))*100))
 
         print("finito!")
         self.finished.emit()

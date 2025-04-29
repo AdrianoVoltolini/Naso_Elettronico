@@ -1,7 +1,9 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow , QFileDialog
 from PySide6.QtCore import QThread
+from PySide6.QtGui import QTextCursor
 from GUI import Ui_MainWindow
+from datetime import datetime
 
 from utils import EmittingStream, QueuerWorker, AnalisiWorker
 
@@ -15,10 +17,10 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.setFixedSize(self.size()) 
 
-        self.ui.plainTextEdit_queuer.setDisabled(True)
-        self.ui.plainTextEdit_analisi.setDisabled(True)
+        #self.ui.plainTextEdit_queuer.setDisabled(True)
+        #self.ui.plainTextEdit_analisi.setDisabled(True)
 
-        txt_intro = "Auto Nos 0.2 - Sviluppato da Adriano Voltolini per la Fondazione Museo Civico Rovereto"
+        txt_intro = "Auto Nos 0.3 - Sviluppato da Adriano Voltolini per la Fondazione Museo Civico di Rovereto"
         self.ui.plainTextEdit_queuer.setPlainText(txt_intro)
         self.ui.plainTextEdit_analisi.setPlainText(txt_intro)
 
@@ -41,19 +43,14 @@ class MainWindow(QMainWindow):
         self.ui.spinBox_anno.setMaximum(2100)
         self.ui.spinBox_analisi_anno.setMinimum(1900)
         self.ui.spinBox_analisi_anno.setMaximum(2100)
-        self.ui.doubleSpinBox_analisi_delta.setMaximum(9999)
         self.ui.doubleSpinBox_analisi_max_d.setMaximum(9999)
-        self.ui.doubleSpinBox_analisi_wiggle.setMaximum(9999)
 
         #setta valori iniziali
-        self.ui.spinBox_anno.setValue(2024)
-        self.ui.spinBox_analisi_anno.setValue(2024)
-        self.ui.doubleSpinBox_analisi_delta.setValue(100)
+        self.ui.spinBox_anno.setValue(datetime.now().year)
+        self.ui.spinBox_analisi_anno.setValue(datetime.now().year)
         self.ui.doubleSpinBox_analisi_max_d.setValue(400)
         self.ui.doubleSpinBox_analisi_soglia.setValue(2)
-        self.ui.doubleSpinBox_analisi_wiggle.setValue(300)
         self.ui.lineEdit_posizione_naso.setText("Simoncelli")
-        self.ui.lineEdit_analisi_foglio_interruz.setText("misure e interruz")
 
         #connette pulsanti scegli
         self.ui.pushButton_scegli_input.pressed.connect(self.scegli_input_directory)
@@ -74,13 +71,10 @@ class MainWindow(QMainWindow):
         self.ui.checkBox_stampa_meta.setToolTip("scegli se salvare i metadata dei sensori, in formato csv")
         self.ui.label_analisi_cartella_input.setToolTip("cartella dove sono le sottocartelle dei NOS divisi per mese")
         self.ui.label_analisi_cartella_meteo.setToolTip("cartella dove sono i file CSV riguardanti la direzione e velocità del vento dell'anno scelto")
-        self.ui.label_analisi_file_interruz.setToolTip("file excel dove sono annotate le interruzioni di misurazione")
-        self.ui.label_analisi_foglio_interruz.setToolTip("nome del foglio del file excel dove sono annotate le interruzioni")
+        self.ui.label_analisi_file_interruz.setToolTip("file csv creato dal queuer dove sono annotate le interruzioni di misurazione")
         self.ui.label_analisi_anno.setToolTip("Anno in cui sono state effettuate <b>TUTTE</b> le misurazioni nei file NOS")
         self.ui.label_analisi_soglia.setToolTip("soglia dei segnali affinché vengano considerati come picchi")
         self.ui.label_analisi_max_d.setToolTip("distanza massima affinché due picchi vengano considerati della stessa curva")
-        self.ui.label_analisi_wiggle.setToolTip("distanza massima tra il momento d'interruzione e un'estremità del grafico affinché l'interruzione venga disegnata alle estremità")
-        self.ui.label_analisi_delta.setToolTip("numero di secondi che dura (di solito) una misurazione")
 
 
         # per scrivere output del terminale nei textedit
@@ -95,10 +89,12 @@ class MainWindow(QMainWindow):
     def normalOutputWritten(self, text):
         if self.ui.tabWidget.currentIndex() == 0:
             self.ui.plainTextEdit_queuer.appendPlainText(text)
-            self.ui.plainTextEdit_queuer.ensureCursorVisible()
+            #self.ui.plainTextEdit_queuer.moveCursor(QTextCursor.EndOfBlock)
+            #self.ui.plainTextEdit_queuer.ensureCursorVisible()
         else:
             self.ui.plainTextEdit_analisi.appendPlainText(text)
-            self.ui.plainTextEdit_analisi.ensureCursorVisible()
+            #self.ui.plainTextEdit_analisi.moveCursor(QTextCursor.EndOfBlock)
+            #self.ui.plainTextEdit_analisi.ensureCursorVisible()
 
     def scegli_input_directory(self):
         dir = QFileDialog.getExistingDirectory(self)
@@ -127,7 +123,20 @@ class MainWindow(QMainWindow):
         self.ui.spinBox_analisi_anno.setValue(self.ui.spinBox_anno.value())
     
     def inizia_queuer(self):
-        self.ui.tabWidget.setDisabled(True)
+
+        da_disattivare = [
+            self.ui.lineEdit_cartella_input,
+            self.ui.pushButton_scegli_input,
+            self.ui.lineEdit_cartella_output,
+            self.ui.pushButton_scegli_output,
+            self.ui.lineEdit_posizione_naso,
+            self.ui.spinBox_anno,
+            self.ui.checkBox_stampa_meta,
+            self.ui.bottone_start_queuer]
+
+        for x in da_disattivare:
+            x.setDisabled(True)
+
         self.ui.progressBar_queuer.setValue(0)
 
         anno = str(self.ui.spinBox_anno.value())
@@ -143,27 +152,33 @@ class MainWindow(QMainWindow):
 
         self.worker.progress.connect(lambda x: self.ui.progressBar_queuer.setValue(x))
         self.worker.finished.connect(self.mythread.quit)
-        self.worker.finished.connect(lambda: self.ui.tabWidget.setDisabled(False))
+
+        self.worker.finished.connect(lambda: self.ui.lineEdit_cartella_input.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.pushButton_scegli_input.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.lineEdit_cartella_output.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.pushButton_scegli_output.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.lineEdit_posizione_naso.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.spinBox_anno.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.checkBox_stampa_meta.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.bottone_start_queuer.setDisabled(False))
+
         self.worker.finished.connect(self.worker.deleteLater)
         self.worker.finished.connect(self.mythread.deleteLater)
 
         self.mythread.start()
 
     def inizia_analisi(self):
-        self.ui.tabWidget.setDisabled(True)
+        #self.ui.tabWidget.setDisabled(True)
         self.ui.progressBar_analisi.setValue(0)
 
         cartella = self.ui.lineEdit_analisi_cartella_input.text()
         cartella_meteo = self.ui.lineEdit_analisi_cartella_meteo.text()
         interruzioni = self.ui.lineEdit_analisi_file_interruz.text()
-        sheet = self.ui.lineEdit_analisi_foglio_interruz.text()
         anno = self.ui.spinBox_anno.value()
         soglia = self.ui.doubleSpinBox_analisi_soglia.value()
         max_d = self.ui.doubleSpinBox_analisi_max_d.value()
-        wiggle = self.ui.doubleSpinBox_analisi_wiggle.value()
-        delta = self.ui.doubleSpinBox_analisi_delta.value()
 
-        self.worker = AnalisiWorker(cartella, cartella_meteo, interruzioni, sheet, anno, soglia, max_d, wiggle, delta, self.mesi)
+        self.worker = AnalisiWorker(cartella, cartella_meteo, interruzioni, anno, soglia, max_d, self.mesi)
         self.mythread = QThread()
         self.worker.moveToThread(self.mythread)
         self.mythread.started.connect(self.worker.run)

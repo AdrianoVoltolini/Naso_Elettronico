@@ -267,9 +267,9 @@ def main(anno, posizione_naso, cartella_input, cartella_output, stampa_meta):
 
 # %%
 if __name__ == "__main__":
-  anno = "2024"
+  anno = "2025"
   posizione_naso = "Simoncelli"
-  cartella_input = "dati/Simoncelli_2024_ZI MISURE"
+  cartella_input = "D:Simoncelli_2025_ZI MISURE"
   cartella_output = "ogni 4 gg"
   stampa_meta = True
 
