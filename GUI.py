@@ -294,7 +294,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"auto_nos", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Auto Nos", None))
         self.label_cartella_input.setText(QCoreApplication.translate("MainWindow", u"Cartella Input", None))
         self.pushButton_scegli_input.setText(QCoreApplication.translate("MainWindow", u"Scegli...", None))
         self.label_cartella_output.setText(QCoreApplication.translate("MainWindow", u"Cartella Output", None))
