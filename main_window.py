@@ -168,7 +168,24 @@ class MainWindow(QMainWindow):
         self.mythread.start()
 
     def inizia_analisi(self):
-        #self.ui.tabWidget.setDisabled(True)
+
+        da_disattivare = [
+            self.ui.lineEdit_analisi_cartella_input,
+            self.ui.pushButton_analisi_scegli_input,
+            self.ui.lineEdit_analisi_cartella_meteo,
+            self.ui.pushButton_analisi_cartella_meteo,
+            self.ui.lineEdit_analisi_file_interruz,
+            self.ui.pushButton_analisi_scegli_file_interruz,
+            self.ui.spinBox_analisi_anno,
+            self.ui.doubleSpinBox_analisi_soglia,
+            self.ui.doubleSpinBox_analisi_max_d,
+            self.ui.bottone_start_analisi
+        ]
+
+        for x in da_disattivare:
+            x.setDisabled(True)
+
+
         self.ui.progressBar_analisi.setValue(0)
 
         cartella = self.ui.lineEdit_analisi_cartella_input.text()
@@ -185,7 +202,18 @@ class MainWindow(QMainWindow):
 
         self.worker.progress.connect(lambda x: self.ui.progressBar_analisi.setValue(x))
         self.worker.finished.connect(self.mythread.quit)
-        self.worker.finished.connect(lambda: self.ui.tabWidget.setDisabled(False))
+
+        self.worker.finished.connect(lambda: self.ui.lineEdit_analisi_cartella_input.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.pushButton_analisi_scegli_input.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.lineEdit_analisi_cartella_meteo.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.pushButton_analisi_cartella_meteo.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.lineEdit_analisi_file_interruz.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.pushButton_analisi_scegli_file_interruz.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.spinBox_analisi_anno.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.doubleSpinBox_analisi_soglia.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.doubleSpinBox_analisi_max_d.setDisabled(False))
+        self.worker.finished.connect(lambda: self.ui.bottone_start_analisi.setDisabled(False))
+    
         self.worker.finished.connect(self.worker.deleteLater)
         self.worker.finished.connect(self.mythread.deleteLater)
 

@@ -114,7 +114,7 @@ class AnalisiWorker(QtCore.QObject):
         df_interruzioni = pd.read_csv(self.interruzioni)
         
         cnt = 0
-        list_cartella = os.listdir(self.cartella)
+        list_cartella = [x for x in os.listdir(self.cartella) if os.path.isdir(f"{self.cartella}/{x}")]
 
         for sub_cartella in list_cartella:
             cnt += 1
